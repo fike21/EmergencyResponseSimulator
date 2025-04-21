@@ -1,0 +1,53 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("🚨 Emergency Response Simulator 🚨");
+        Console.WriteLine("----------------------------------");
+        
+        List<EmergencyUnit> units = new List<EmergencyUnit>
+        {
+            new Police("Patrol Unit 1", 60),
+            new Firefighter("Engine Company 8", 50),
+            new Ambulance("Medic 61", 70)
+        };
+        
+        string[] locations = { "Downtown", "City Hall", "Suburbia", "Industrial Park", "Shopping Mall" };
+        string[] incidentTypes = { "Crime", "Fire", "Medical" };
+        Random random = new Random();
+        int score = 0;
+        
+        for (int round = 1; round <= 5; round++)
+        {
+            Console.WriteLine($"\n--- Turn {round} ---");
+            
+            Incident incident = new Incident(
+                incidentTypes[random.Next(incidentTypes.Length)],
+                locations[random.Next(locations.Length)]
+            );
+            
+            Console.WriteLine($"🚨 Incident: {incident.Type} at {incident.Location}");
+            
+            EmergencyUnit responder = units.Find(u => u.CanHandle(incident.Type));
+            
+            if (responder != null)
+            {
+                responder.RespondToIncident(incident);
+                score += 10;
+                Console.WriteLine($"✅ +10 points (Total: {score})");
+            }
+            else
+            {
+                Console.WriteLine("❌ No available units!");
+                score -= 5;
+                Console.WriteLine($"⚠️ -5 points (Total: {score})");
+            }
+        }
+        
+        Console.WriteLine($"\n=== Simulation Complete ===");
+        Console.WriteLine($"Final Score: {score}/50");
+    }
+}
